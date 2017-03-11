@@ -163,6 +163,7 @@
         // Fill supports object
         supports.transforms = testTransformsSupport();
         supports.svg = testSVGSupport();
+        testPassiveEvents(supports);
 
         buildOverlay();
         removeFromCache(selector);
@@ -306,25 +307,27 @@
     }
 
     function bindEvents() {
+        var passive = supports.passiveEvents ? { passive: true } : null;
         bind(overlay, 'click', overlayClickHandler);
         bind(previousButton, 'click', previousButtonClickHandler);
         bind(nextButton, 'click', nextButtonClickHandler);
         bind(closeButton, 'click', closeButtonClickHandler);
         bind(slider, 'contextmenu', contextmenuHandler);
-        bind(overlay, 'touchstart', touchstartHandler);
-        bind(overlay, 'touchmove', touchmoveHandler);
+        bind(overlay, 'touchstart', touchstartHandler, passive);
+        bind(overlay, 'touchmove', touchmoveHandler, passive);
         bind(overlay, 'touchend', touchendHandler);
         bind(document, 'focus', trapFocusInsideOverlay, true);
     }
 
     function unbindEvents() {
+        var passive = supports.passiveEvents ? { passive: true } : null;
         unbind(overlay, 'click', overlayClickHandler);
         unbind(previousButton, 'click', previousButtonClickHandler);
         unbind(nextButton, 'click', nextButtonClickHandler);
         unbind(closeButton, 'click', closeButtonClickHandler);
         unbind(slider, 'contextmenu', contextmenuHandler);
-        unbind(overlay, 'touchstart', touchstartHandler);
-        unbind(overlay, 'touchmove', touchmoveHandler);
+        unbind(overlay, 'touchstart', touchstartHandler, passive);
+        unbind(overlay, 'touchmove', touchmoveHandler, passive);
         unbind(overlay, 'touchend', touchendHandler);
         unbind(document, 'focus', trapFocusInsideOverlay, true);
     }
@@ -653,6 +656,22 @@
         return (div.firstChild && div.firstChild.namespaceURI) === 'http://www.w3.org/2000/svg';
     }
 
+    // Borrowed from https://github.com/seiyria/bootstrap-slider/pull/680/files
+    // This function is async so we pass `supports` as an argument
+    function testPassiveEvents(supports) {
+        supports.passiveEvents = false;
+        try {
+            var opts = Object.defineProperty({}, 'passive', {
+                get: function() {
+                    supports.passiveEvents = true;
+                }
+            });
+            window.addEventListener('test', null, opts);
+        } catch (e) {
+            // Silence the error and continue
+        }
+    }
+
     function preloadNext(index) {
         if (index - currentIndex >= options.preload) {
             return;
@@ -671,9 +690,9 @@
         });
     }
 
-    function bind(element, event, callback, useCapture) {
+    function bind(element, event, callback, options) {
         if (element.addEventListener) {
-            element.addEventListener(event, callback, useCapture);
+            element.addEventListener(event, callback, options);
         } else {
             // IE8 fallback
             element.attachEvent('on' + event, function(event) {
@@ -685,9 +704,9 @@
         }
     }
 
-    function unbind(element, event, callback, useCapture) {
+    function unbind(element, event, callback, options) {
         if (element.removeEventListener) {
-            element.removeEventListener(event, callback, useCapture);
+            element.removeEventListener(event, callback, options);
         } else {
             // IE8 fallback
             element.detachEvent('on' + event, callback);
