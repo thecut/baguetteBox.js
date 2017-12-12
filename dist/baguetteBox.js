@@ -173,7 +173,6 @@
     }
 
     function bindImageClickListeners(selector, userOptions) {
-        console.log('user options', userOptions);
         // For each gallery bind a click event to every image inside it
         var galleryNodeList = document.querySelectorAll(selector);
         var selectorData = {
@@ -183,7 +182,6 @@
         data[selector] = selectorData;
 
         [].forEach.call(galleryNodeList, function(galleryElement) {
-            console.log('bindImage', userOptions);
             if (userOptions && userOptions.filter) {
                 regex = userOptions.filter;
             }
@@ -251,7 +249,6 @@
     }
 
     function buildOverlay(userOptions) {
-        console.log('build', userOptions);
         overlay = getByID('baguetteBox-overlay');
         // Check if the overlay already exists
         if (overlay) {
@@ -354,7 +351,6 @@
         }
         currentGallery = gallery;
         // Update gallery specific options
-        console.log('user options', userOptions);
         setOptions(userOptions);
         // Empty slider of previous contents (more effective than .innerHTML = "")
         while (slider.firstChild) {
@@ -386,7 +382,6 @@
         // Fill options object
         for (var item in defaults) {
             options[item] = defaults[item];
-            // console.log(options[item]);
             if (typeof newOptions[item] !== 'undefined') {
                 options[item] = newOptions[item];
             }
