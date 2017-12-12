@@ -277,7 +277,6 @@
         } else {
             previousButton.innerHTML = supports.svg ? leftArrow : '&lt;';
         };
-        overlay.appendChild(previousButton);
 
         nextButton = create('button');
         nextButton.setAttribute('type', 'button');
@@ -288,7 +287,6 @@
         } else {
             nextButton.innerHTML = supports.svg ? rightArrow : '&gt;';
         };
-        overlay.appendChild(nextButton);
 
         closeButton = create('button');
         closeButton.setAttribute('type', 'button');
@@ -299,7 +297,10 @@
         } else {
             closeButton.innerHTML = supports.svg ? closeX : '&times;';
         };
+
         overlay.appendChild(closeButton);
+        overlay.appendChild(previousButton);
+        overlay.appendChild(nextButton);
 
         previousButton.className = nextButton.className = closeButton.className = 'baguetteBox-button';
 
@@ -448,11 +449,7 @@
     }
 
     function initFocus() {
-        if (options.buttons) {
-            previousButton.focus();
-        } else {
-            closeButton.focus();
-        }
+        closeButton.focus();
     }
 
     function enterFullScreen() {
