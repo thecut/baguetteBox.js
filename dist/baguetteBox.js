@@ -438,7 +438,7 @@
                 document.body.classList.add(options.bodyClass);
             }
             if (options.afterShow) {
-                options.afterShow();
+                options.afterShow(currentIndex, imagesElements.length);
             }
         }, 50);
         if (options.onChange) {
